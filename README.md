@@ -1,5 +1,5 @@
-# sys-version
-Gradle 构建时为应用模块设定版本、添加版本查询接口。
+# neoframework-cloud-demo
+演示 Spring Cloud 基础功能，如注册中心，配置中心， 认证中心等。参考： [anilallewar/microservices-basics-spring-boot](https://github.com/anilallewar/microservices-basics-spring-boot)
 
 ## 特性
 * 以 Spring Cloud starter 项目为例。
@@ -8,7 +8,7 @@ Gradle 构建时为应用模块设定版本、添加版本查询接口。
 * styleguide 一份代码风格规范及说明。
 
 ## 缘由
-线上测试、生产等情形都可能需要清楚应用当前部署的版本，所以遵循 [《语义化版本 2.0.0》](https://semver.org/lang/zh-CN/) 版本号规范的最佳实践，按模块各自提供一个版本查询接口，整合到基于 Maven 或 Gradle 构建的项目。
+基于 [mingt/sys-version](https://github.com/mingt/sys-version) 开始整理。
 
 ## 用法
 
@@ -78,7 +78,7 @@ trace-service/src/main/resources/version.properties ，重新运行。但注意�
 
 （3） 下一步还能做什么？
 
-前端在需要的地方显示版本号是调用查询接口；运维可以整合部署模块的版本信息到统一界面，方便查询管理；自动化构建整合需要时使用，等等。
+(待补充)
 
 ## 其他
 
@@ -86,7 +86,7 @@ trace-service/src/main/resources/version.properties ，重新运行。但注意�
 见另一个代码库。
 
 ### Spring Cloud starter
-* 注册中心，配置中心，认证中心等已略去。 trace-service 的配置改回本地 Spring Boot 配置项。
+* 注册中心，配置中心，认证中心等已略去。 本项目的业务模块配置改回本地 Spring Boot 配置项。
 * 来源于以下项目： [anilallewar/microservices-basics-spring-boot](https://github.com/anilallewar/microservices-basics-spring-boot) 致谢原作者，其最近更新也为 k8s 部署提供了一个方向。
 * 为了方便国内访问，正常查看配图，目前在 Gitee 做了一份克隆： [ahming/microservices-basics-spring-boot](https://gitee.com/m1024ing/microservices-basics-spring-boot)
 

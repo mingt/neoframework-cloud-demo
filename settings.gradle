@@ -1,4 +1,4 @@
-rootProject.name = 'sys-version-demo'
+rootProject.name = 'neoframework-cloud-demo'
 include 'base-common'
 include 'trace-service'
 

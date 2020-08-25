@@ -1,5 +1,5 @@
 /*
-* Build file for trace-webservice
+* Build file for this project
 */
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
