@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.anilallewar.microservices.auth.dao.OauthClientDetailsDao">
+
+    <sql id="Base_Column_List">
+    <![CDATA[
+       client_id as clientId,resource_ids as resourceIds,client_secret as clientSecret,scope,
+       authorized_grant_types as authorizedGrantTypes,
+       web_server_redirect_uri as webServerRedirectUri,authorities,
+       access_token_validity as accessTokenValidity,refresh_token_validity as refreshTokenValidity,
+       additional_information as additionalInformation,
+       create_time as createTime,archived,trusted,autoapprove
+    ]]>
+    </sql>
+
+    <!--  -->
+    <select id="findOauthClientDetails" parameterType="String" resultType="OauthClientDetails">
+    <![CDATA[
+        select * from oauth_client_details where client_id = #{clientId}
+    ]]>
+    </select>
+
+	<!--  -->
+    <select id="findAllOauthClientDetails" parameterType="String" resultType="OauthClientDetails">
+        select <include refid="Base_Column_List"/>
+        from oauth_client_details order by create_time desc
+    </select>
+
+    <!--  -->
+    <update id="updateOauthClientDetailsArchive" parameterType="OauthClientDetails">
+        update oauth_client_details set archived = #{archived,jdbcType=TINYINT} where client_id = #{clientId}
+    </update>
+
+    <!--  -->
+    <insert id="saveOauthClientDetails" parameterType="OauthClientDetails">
+        insert into oauth_client_details (client_id,resource_ids,client_secret,scope,authorized_grant_types,
+        web_server_redirect_uri,authorities,access_token_validity,refresh_token_validity,
+        additional_information,trusted,autoapprove,create_time
+        )
+        values (#{clientId}, #{resourceIds}, #{clientSecret}, #{scope}, #{authorizedGrantTypes},
+        #{webServerRedirect_uri}, #{authorities}, #{accessTokenValidity,jdbcType=INTEGER}, #{refreshTokenValidity,jdbcType=INTEGER},
+        #{additionalInformation}, #{trusted}, #{autoapprove}, #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+</mapper>

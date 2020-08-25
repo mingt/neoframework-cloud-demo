@@ -1,0 +1,4 @@
+
+目前不再用-build.gradle-已注释掉libs依赖-保留仅供参考
+
+现在 auth-server-common 作为项目依赖

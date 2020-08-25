@@ -84,6 +84,9 @@ dependencies {
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:1.1.1")
     compile("mysql:mysql-connector-java:5.1.30")
 
+    // redis
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+
     // general utils
     compile('org.apache.commons:commons-lang3:3.3.2')
 

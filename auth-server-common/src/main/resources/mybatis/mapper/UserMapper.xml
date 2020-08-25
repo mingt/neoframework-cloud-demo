@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anilallewar.microservices.auth.dao.UserDao">
+
+	<!-- 20190306 TODO: 下面为了更保险地保证 company.id office.id 非空，做了调整
+	初步猜测不会有 user.company / user.office 是否为空的业务相关判断，因此这个修改应该安全，并且
+	更好保证一些业务必须要求 user.company / user.office 非空的情况。
+	另外，（1）如果有业务依赖 company/office 的 area 等除 id 外的字段，则可能在需要时额外查询出机构信息
+	（2）如果某些机构已删除，业务上的一些调整仍然待分析、正确处理
+	-->
+    <sql id="userColumns">
+		a.id,
+		a.company_id AS "company.id",
+		a.office_id AS "office.id",
+    	a.dept_id AS deptId,
+    	dp.name AS deptName,
+    	a.login_name AS LoginName,
+		a.uid,
+    	a.password,
+    	a.no,
+		a.name,
+		a.email,
+		a.phone,
+		a.address,
+		a.mobile,
+		a.qq,
+		a.sex,
+		a.student_uid AS studentUid,
+		a.relation,
+		a.user_type AS userType,
+		a.login_ip AS loginIp,
+		a.login_date AS loginDate,
+		a.login_count AS loginCount,
+		a.remarks,
+		a.login_flag AS loginFlag,
+		a.photo,
+		a.active_date AS activeDate,
+		a.expired_date AS expiredDate,
+		a.status AS status,
+		a.latest_active_date AS latestActiveDate,
+		a.valid_days as validDays,
+		a.create_by AS "createBy.id",
+		a.create_date AS createDate,
+		a.update_by AS "updateBy.id",
+		a.update_date AS updateDate,
+		a.del_flag as delFlag,
+		a.book_tag_id as bookTagId,
+		a.book_tag_name as bookTagName,
+		a.referral_code AS referralCode,
+
+    	c.name AS "company.name",
+    	c.oid AS "company.oid",
+    	c.parent_id AS "company.parent.id",
+    	c.parent_ids AS "company.parentIds",
+    	ca.id AS "company.area.id",
+    	ca.name AS "company.area.name",
+    	ca.parent_id AS "company.area.parent.id",
+    	ca.parent_ids AS "company.area.parentIds",
+    	o.name AS "office.name",
+    	o.type AS "office.type",
+    	o.oid AS "office.oid",
+    	o.parent_id AS "office.parent.id",
+    	o.parent_ids AS "office.parentIds",
+    	oa.id AS "office.area.id",
+    	oa.name AS "office.area.name",
+    	oa.parent_id AS "office.area.parent.id",
+    	oa.parent_ids AS "office.area.parentIds",
+
+		a.student_uid AS "student.uid",
+		su.name AS "student.name",
+		su.id AS "student.id"
+    </sql>
+	<!-- 注意 company.id和office.id 在 a.company_id 和 a.office_id 已给出 -->
+	<!--
+     	c.id AS "company.id",
+     	o.id AS "office.id",
+
+    	cu.id AS "company.primaryPerson.id",
+    	cu.name AS "company.primaryPerson.name",
+    	cu2.id AS "company.deputyPerson.id",
+    	cu2.name AS "company.deputyPerson.name",
+    	ou.id AS "office.primaryPerson.id",
+    	ou.name AS "office.primaryPerson.name",
+    	ou2.id AS "office.deputyPerson.id",
+    	ou2.name AS "office.deputyPerson.name",
+
+	,
+    r.id AS "roleList.id",
+    r.office_id AS "roleList.office.id",
+    r.name AS "roleList.name",
+    r.enname AS "roleList.enname",
+    r.role_type AS "roleList.roleType",
+    r.data_scope AS "roleList.dataScope" -->
+
+	<sql id="simpleUserColumns">
+		a.id,
+		a.company_id AS "company.id",
+		a.office_id AS "office.id",
+    	a.dept_id AS deptId,
+    	a.login_name AS LoginName,
+		a.uid,
+    	a.password,
+    	a.no,
+		a.name,
+		a.email,
+		a.phone,
+		a.mobile,
+		a.qq,
+		a.sex,
+		a.student_uid AS studentUid,
+		a.relation,
+		a.user_type AS userType,
+		a.login_ip AS loginIp,
+		a.login_date AS loginDate,
+		a.login_count AS loginCount,
+		a.remarks,
+		a.login_flag AS loginFlag,
+		a.photo,
+		a.active_date AS activeDate,
+		a.expired_date AS expiredDate,
+		a.status AS status,
+		a.latest_active_date AS latestActiveDate,
+		a.valid_days as validDays,
+		a.create_by AS "createBy.id",
+		a.create_date AS createDate,
+		a.update_by AS "updateBy.id",
+		a.update_date AS updateDate,
+		a.del_flag as delFlag,
+		a.book_tag_id as bookTagId,
+		a.book_tag_name as bookTagName,
+		a.referral_code AS referralCode,
+
+		a.student_uid AS "student.uid"
+    </sql>
+
+    <sql id="userJoins">
+		LEFT JOIN sys_office c ON (c.id = a.company_id and c.del_flag = '0')
+		LEFT JOIN sys_area ca ON ca.id = c.area_id
+		LEFT JOIN sys_office o ON (o.id = a.office_id and o.del_flag = '0')
+		LEFT JOIN sys_area oa ON oa.id = o.area_id
+		LEFT JOIN sys_user su ON su.uid = a.student_uid
+		LEFT JOIN sys_dept dp ON dp.dept_id = a.dept_id
+    </sql>
+	<!--
+		LEFT JOIN sys_user cu ON cu.id = c.primary_person
+		LEFT JOIN sys_user cu2 ON cu2.id = c.deputy_person
+		LEFT JOIN sys_user ou ON ou.id = o.primary_person
+		LEFT JOIN sys_user ou2 ON ou2.id = o.deputy_person
+
+		LEFT JOIN sys_user_role ur ON ur.user_id = a.id
+        LEFT JOIN sys_role r ON r.id = ur.role_id
+	-->
+
+	<!-- 根据编号获得用户 -->
+	<select id="get" resultType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+			<include refid="userColumns"/><!-- ,
+			ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins"/><!--
+		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
+		WHERE a.id = #{id} AND a.del_flag = 0
+	</select>
+
+	<!-- 根据编号和角色获得用户 TODO：扩展支持动态角色 ahming 20191224增加del_flag = 0 -->
+	<select id="getByStudent" resultType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+		<include refid="userColumns"/><!-- ,
+			ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins"/>
+		LEFT JOIN sys_user_role ur ON ur.user_id = a.id
+		LEFT JOIN sys_role r ON r.id = ur.role_id
+		WHERE a.id = #{id} AND a.del_flag = 0
+		AND r.enname = 'ROLE_STUDENT'
+	</select>
+
+	<!-- 准备优化登录初次查询不需要连接其他表 -->
+	<!-- 根据登录名查询用户 -->
+	<select id="getByLoginNameSimple" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT <include refid="simpleUserColumns"/> FROM sys_user a
+		WHERE a.login_name = #{loginName} AND a.del_flag = '0'
+	</select>
+
+	<!-- 根据email查询用户 -->
+	<select id="getByEmailSimple" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT <include refid="simpleUserColumns"/> FROM sys_user a
+		WHERE a.email = #{email} AND a.del_flag = '0'
+	</select>
+
+	<!-- 根据博学号uid查询用户 -->
+	<select id="getByUidBoxueNoSimple" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT <include refid="simpleUserColumns"/> FROM sys_user a
+		WHERE a.uid = #{uid} AND a.del_flag = '0'
+	</select>
+
+	<!-- 根据手机号码查询用户 -->
+	<select id="getByMobileSimple" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT <include refid="simpleUserColumns"/> FROM sys_user a
+		WHERE a.mobile = #{mobile} AND a.del_flag = '0'
+	</select>
+
+	<!-- 根据工号查询用户 -->
+	<select id="getByNoSimple" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT <include refid="simpleUserColumns"/> FROM sys_user a
+		WHERE a.no = #{no} AND a.del_flag = '0'
+	</select>
+
+	<!-- 根据登录名查询用户 -->
+	<select id="getByLoginName" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+            parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+			<include refid="userColumns"/><!-- ,
+			ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins"/><!--
+		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
+		WHERE a.login_name = #{loginName} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
+	<!-- 根据email查询用户 -->
+	<select id="getByEmail" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+		<include refid="userColumns"/><!-- ,
+			ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins"/><!--
+		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
+		WHERE a.email = #{email} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
+	<!-- 根据博学号uid查询用户 -->
+	<select id="getByUidBoxueNo" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+		<include refid="userColumns"/><!-- ,
+			ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins"/><!--
+		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
+		WHERE a.uid = #{uid} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
+	<!-- 根据手机号码查询用户 -->
+	<select id="getByMobile" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+		<include refid="userColumns"/><!-- ,
+			ro.office_id AS "roleList.officeList.id" -->
+		FROM sys_user a
+		<include refid="userJoins"/><!--
+		LEFT JOIN sys_role_office ro ON ro.role_id = r.id -->
+		WHERE a.mobile = #{mobile} AND a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
+	<!-- 分页查询用户信息 -->
+	<select id="findList" resultType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+			<include refid="userColumns"/>
+		FROM sys_user a
+		<include refid="userJoins"/>
+		<if test="role != null and role.id != null and role.id != ''">
+			JOIN sys_user_role ur ON ur.user_id = a.id AND ur.role_id = #{role.id}
+		</if>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="company != null and company.id != null and company.id != ''">
+			AND (c.id = #{company.id} OR c.parent_ids LIKE CONCAT('%,', #{company.id}, ',%'))
+		</if>
+		<if test="office != null and office.id != null and office.id != ''">
+			AND (o.id = #{office.id} OR o.parent_ids LIKE CONCAT('%,', #{office.id}, ',%'))
+		</if>
+		<!-- 如果不是超级管理员，则不显示超级管理员用户 -->
+		<if test="currentUser == null or !currentUser.admin">
+			AND a.id != '1'
+		</if>
+		<if test="loginName != null and loginName != ''">
+			AND a.login_name like CONCAT('%', #{loginName}, '%')
+		</if>
+		<if test="name != null and name != ''">
+			AND a.name like CONCAT('%', #{name}, '%')
+		</if>
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date desc
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 这个排序太慢了 ORDER BY c.code, o.code, a.name -->
+
+	<!-- 根据OfficeId获取用户（树查询用户时用） -->
+	<select id="findUserByOfficeId" resultType="com.thinkgem.jeesite.modules.sys.entity.User" useCache="true">
+		SELECT a.id, a.name, a.email, a.phone, a.mobile, a.photo, a.qq, a.sex, a.uid
+		FROM sys_user a LEFT JOIN sys_user_role ur ON ur.user_id = a.id
+		JOIN sys_role r ON ur.role_id = r.id
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.office_id = #{office.id}
+			AND r.enname = #{role.enname}
+		ORDER BY a.name
+	</select>
+
+	<!-- 查询全部用户 -->
+	<select id="findAllList" resultType="com.thinkgem.jeesite.modules.sys.entity.User">
+		SELECT
+			<include refid="userColumns"/>
+		FROM sys_user a
+		<include refid="userJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY c.code, o.code, a.name
+	</select>
+
+	<!-- 查询全部用户数目 -->
+	<select id="findAllCount" resultType="long">
+		SELECT
+			COUNT(1)
+		FROM sys_user a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+
+	<!-- 插入用户 -->
+	<insert id="insert">
+		INSERT INTO sys_user(
+			id,
+			company_id,
+			office_id,
+			student_uid,
+			relation,
+			login_name,
+			password,
+			no,
+			name,
+			email,
+			phone,
+			mobile,
+			qq,
+			sex,
+			user_type,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			login_flag,
+			photo,
+			del_flag
+		) VALUES (
+			#{id},
+			#{company.id},
+			#{office.id},
+			#{studentUid},
+			#{relation},
+			#{loginName},
+			#{password},
+			#{no},
+			#{name},
+			#{email},
+			#{phone},
+			#{mobile},
+			#{qq},
+			#{sex},
+			#{userType},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{loginFlag},
+			#{photo},
+			#{delFlag}
+		)
+	</insert>
+
+	<!-- 更新用户 -->
+	<update id="update">
+		UPDATE sys_user SET
+			company_id = #{company.id},
+			office_id = #{office.id},
+			student_uid = #{studentUid},
+			relation = #{relation},
+			login_name = #{loginName},
+			password = #{password},
+			no = #{no},
+			name = #{name},
+			email = #{email},
+			phone = #{phone},
+			mobile = #{mobile},
+			qq = #{qq},
+			sex = #{sex},
+			user_type = #{userType},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			login_flag = #{loginFlag},
+			photo = #{photo}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 删除用户和角色关联表数据 -->
+	<delete id="deleteUserRole">
+		DELETE FROM sys_user_role WHERE user_id = #{id}
+	</delete>
+
+	<!-- 插入用户和角色关联表数据 -->
+	<insert id="insertUserRole">
+		INSERT INTO sys_user_role(user_id, role_id)
+		<foreach collection="roleList" item="role" separator=" union all ">
+			SELECT #{id}, #{role.id}
+			FROM dual
+		</foreach>
+	</insert>
+
+	<!-- 更新用户信息  -->
+	<update id="updateUserInfo">
+		UPDATE sys_user SET
+			email = #{email},
+			phone = #{phone},
+			mobile = #{mobile},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			photo = #{photo}
+		WHERE id = #{id}
+	</update>
+
+	<update id="activeAccount">
+		update sys_user set
+			active_date = #{activeDate},
+			expired_date = #{expiredDate},
+			status = #{status},
+			login_date = #{loginDate}
+		where id = #{id}
+	</update>
+
+	<!-- 更新用户密码 -->
+	<update id="updatePasswordById">
+		UPDATE sys_user SET
+			password = #{password}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 更新登录信息，如登录IP、登录时间 -->
+	<update id="updateLoginInfo">
+		UPDATE sys_user SET
+			login_ip = #{loginIp},
+			login_Date = #{loginDate}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 逻辑删除用户 -->
+	<update id="delete">
+		UPDATE sys_user SET
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<sql id="roleColumns">
+    	a.id,
+    	a.name,
+    	a.enname,
+    	a.role_type AS roleType,
+		a.data_scope AS dataScope,
+		a.remarks,
+		a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS "updateBy.id",
+		a.update_date,
+		a.del_flag AS delFlag,
+    	a.useable AS useable,
+    	a.is_sys AS sysData
+    </sql>
+	<!-- 查询全部用户角色 -->
+	<select id="findUserRoles" resultType="com.thinkgem.jeesite.modules.sys.entity.Role">
+		SELECT <include refid="roleColumns" />
+		FROM sys_user_role ur left join sys_role a on ur.role_id = a.id
+		WHERE ur.user_id = #{id}
+	</select>
+
+    <!-- 根据用户ID获取推荐码关联信息 -->
+    <select id="getReferralCodeUser" resultType="com.thinkgem.jeesite.modules.sys.entity.ReferralCode">
+		SELECT a.user_id AS userId, a.referral_code AS referralCode, a.from_user_id AS fromUserId
+		FROM sys_referral_code_user a
+		WHERE a.user_id = #{userId}
+	</select>
+</mapper>

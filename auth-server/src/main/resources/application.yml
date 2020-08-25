@@ -1,0 +1,12 @@
+#logging:
+#  level:
+#     org:
+#       springframework:
+#         security: DEBUG
+
+mybatis:
+  config-locations: 'classpath*:mybatis/_mybatis_config.xml'
+  mapper-locations: 'classpath*:mybatis/mapper/**/*.xml'
+  type-aliases-package: 'com.neoframework.common.auth.model'
+  # type-aliases-package: 'com.anilallewar.microservices.auth.model'
+  # type-handlers-package: 'com.github.prontera.domain.type.handler'

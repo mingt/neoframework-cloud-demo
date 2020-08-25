@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anilallewar.microservices.auth.dao.QrCodeDao">
+
+    <sql id="allColumns">
+		a.id,
+		a.username,
+		a.scanned,
+		a.token,
+		a.code,
+		a.create_date AS "createDate",
+		a.expired_date AS "expiredDate"
+    </sql>
+
+	<!-- LEFT JOIN sys_user u ON u.login_name = a.username -->
+    <sql id="mainJoins">
+
+    </sql>
+
+	<select id="get" resultType="com.anilallewar.microservices.auth.model.QrCode">
+		SELECT <include refid="allColumns"/>
+		FROM sys_qr_code a
+		<include refid="mainJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<!-- 查询列表 -->
+	<select id="findList" resultType="com.anilallewar.microservices.auth.model.QrCode">
+		SELECT <include refid="allColumns"/>
+		FROM sys_qr_code a
+		<include refid="mainJoins"/>
+		WHERE 1 = 0
+	</select>
+
+	<!-- 插入 scanned 使用默认值 0 -->
+	<insert id="insert">
+		INSERT INTO sys_qr_code (
+			id,
+		<if test="username != null and username !=''">
+			username,
+		</if>
+			code,
+			create_date,
+			expired_date
+		) VALUES (
+			#{id},
+		<if test="username != null and username !=''">
+			#{username},
+		</if>
+			#{code},
+			#{createDate},
+			#{expiredDate}
+		)
+	</insert>
+
+	<!--&lt;!&ndash; 更新 &ndash;&gt;-->
+	<!--<update id="setScanned">-->
+		<!--UPDATE sys_qr_code SET-->
+			<!--scanned = #{scanned}-->
+		<!--WHERE id = #{id} AND expired_date &lt; #{expiredDate}-->
+	<!--</update>-->
+
+	<!-- 更新 -->
+	<update id="update">
+		UPDATE sys_qr_code SET
+			username = #{username},
+			scanned = #{scanned}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 更新 token -->
+	<update id="updateToken">
+		UPDATE sys_qr_code SET
+			token = #{token}
+		WHERE id = #{id}
+	</update>
+
+	<!-- 物理删除 -->
+	<delete id="delete">
+		DELETE FROM sys_qr_code
+		WHERE id = #{id}
+	</delete>
+
+</mapper>
