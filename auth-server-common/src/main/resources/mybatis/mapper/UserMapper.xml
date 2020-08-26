@@ -480,16 +480,16 @@
     	a.is_sys AS sysData
     </sql>
 	<!-- 查询全部用户角色 -->
-	<select id="findUserRoles" resultType="com.thinkgem.jeesite.modules.sys.entity.Role">
-		SELECT <include refid="roleColumns" />
-		FROM sys_user_role ur left join sys_role a on ur.role_id = a.id
-		WHERE ur.user_id = #{id}
-	</select>
+	<!--<select id="findUserRoles" resultType="com.thinkgem.jeesite.modules.sys.entity.Role">-->
+		<!--SELECT <include refid="roleColumns" />-->
+		<!--FROM sys_user_role ur left join sys_role a on ur.role_id = a.id-->
+		<!--WHERE ur.user_id = #{id}-->
+	<!--</select>-->
 
     <!-- 根据用户ID获取推荐码关联信息 -->
-    <select id="getReferralCodeUser" resultType="com.thinkgem.jeesite.modules.sys.entity.ReferralCode">
-		SELECT a.user_id AS userId, a.referral_code AS referralCode, a.from_user_id AS fromUserId
-		FROM sys_referral_code_user a
-		WHERE a.user_id = #{userId}
-	</select>
+    <!--<select id="getReferralCodeUser" resultType="com.thinkgem.jeesite.modules.sys.entity.ReferralCode">-->
+		<!--SELECT a.user_id AS userId, a.referral_code AS referralCode, a.from_user_id AS fromUserId-->
+		<!--FROM sys_referral_code_user a-->
+		<!--WHERE a.user_id = #{userId}-->
+	<!--</select>-->
 </mapper>

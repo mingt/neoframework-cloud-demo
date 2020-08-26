@@ -17,7 +17,7 @@
 
     </sql>
 
-	<select id="get" resultType="com.anilallewar.microservices.auth.model.QrCode">
+	<select id="get" resultType="QrCode">
 		SELECT <include refid="allColumns"/>
 		FROM sys_qr_code a
 		<include refid="mainJoins"/>
@@ -25,7 +25,7 @@
 	</select>
 
 	<!-- 查询列表 -->
-	<select id="findList" resultType="com.anilallewar.microservices.auth.model.QrCode">
+	<select id="findList" resultType="QrCode">
 		SELECT <include refid="allColumns"/>
 		FROM sys_qr_code a
 		<include refid="mainJoins"/>

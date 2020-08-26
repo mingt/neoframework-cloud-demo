@@ -18,13 +18,16 @@ public class SysController {
 
     private static final Logger logger = LoggerFactory.getLogger(SysController.class);
 
+    /**
+     * The Version config.
+     */
     @Autowired
     VersionConfig versionConfig;
 
     /**
      * 获取版本信息.
      *
-     * @return
+     * @return version
      */
     @GetMapping("version")
     public VersionConfig getVersion() {

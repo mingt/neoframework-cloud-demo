@@ -29,10 +29,12 @@ public class StatCrashLogController {
     /**
      * 上报崩溃日志.
      *
-     * <p>为提高性能，也不需要确保数据高度完整，所以无需事务支持或很多容错处理.</p>
+     * <p>
+     * 为提高性能，也不需要确保数据高度完整，所以无需事务支持或很多容错处理.
+     * </p>
      *
      * @param statCrashLog 详情
-     * @return
+     * @return r
      */
     @PostMapping("/statCrashLog")
     public R statCrashLog(StatCrashLog statCrashLog) {

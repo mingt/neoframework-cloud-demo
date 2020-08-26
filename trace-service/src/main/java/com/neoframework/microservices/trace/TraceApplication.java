@@ -44,10 +44,22 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 })
 public class TraceApplication {
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         SpringApplication.run(TraceApplication.class, args);
     }
 
+    /**
+     * Rest template o auth 2 rest template.
+     *
+     * @param resource the resource
+     * @param context the context
+     * @return the o auth 2 rest template
+     */
     @Bean
     @LoadBalanced
     public OAuth2RestTemplate restTemplate(OAuth2ProtectedResourceDetails resource,

@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The type Stat crash log service.
+ */
 @Service
 public class StatCrashLogServiceImpl implements StatCrashLogService {
 

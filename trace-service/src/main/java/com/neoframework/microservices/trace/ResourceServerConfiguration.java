@@ -11,10 +11,12 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 /**
  * 配置 ResourceServerConfigurerAdapter 支持忽略路径.
  *
- * <p>另一种实现方法是直接由 application 类，如 AuthApplication, UserApplication 继承 ResourceServerConfigurerAdapter，
- * 同时，同样添加下面配置 HttpSecurity 的方法（注释掉的 WebSecurityConfigurerAdapter 可用于忽略资源类）</p>
+ * <p>
+ * 另一种实现方法是直接由 application 类，如 AuthApplication, UserApplication 继承 ResourceServerConfigurerAdapter，
+ * 同时，同样添加下面配置 HttpSecurity 的方法（注释掉的 WebSecurityConfigurerAdapter 可用于忽略资源类）
+ * </p>
  *
- **/
+ */
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
