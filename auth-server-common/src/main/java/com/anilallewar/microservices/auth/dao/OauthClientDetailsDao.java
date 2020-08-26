@@ -2,6 +2,7 @@
 package com.anilallewar.microservices.auth.dao;
 
 import com.anilallewar.microservices.auth.model.OauthClientDetails;
+import com.neoframework.common.database.MyBatisRepository;
 import java.util.List;
 
 /**

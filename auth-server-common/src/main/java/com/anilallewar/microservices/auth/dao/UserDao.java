@@ -1,6 +1,7 @@
 
 package com.anilallewar.microservices.auth.dao;
 
+import com.neoframework.common.database.MyBatisRepository;
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 import com.thinkgem.jeesite.modules.sys.entity.User;
 import java.util.List;

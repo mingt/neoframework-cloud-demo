@@ -2,6 +2,7 @@
 package com.anilallewar.microservices.auth.dao;
 
 import com.neoframework.common.auth.model.QrCode;
+import com.neoframework.common.database.MyBatisRepository;
 import com.thinkgem.jeesite.common.persistence.CrudDao;
 
 /**
