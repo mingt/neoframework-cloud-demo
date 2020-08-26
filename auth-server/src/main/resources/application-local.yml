@@ -14,7 +14,7 @@ security:
     password: password
 
 logging:
-  file: /data/elearning/logs/${spring.application.name}.log
+  file: /data/neoframeowork/logs/${spring.application.name}.log
   level:
     org.springframework.security: DEBUG
 

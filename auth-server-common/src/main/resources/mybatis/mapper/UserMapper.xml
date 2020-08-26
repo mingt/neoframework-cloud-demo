@@ -191,7 +191,7 @@
 	</select>
 
 	<!-- 根据博学号uid查询用户 -->
-	<select id="getByUidBoxueNoSimple" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+	<select id="getByUidSimple" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
 			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
 		SELECT <include refid="simpleUserColumns"/> FROM sys_user a
 		WHERE a.uid = #{uid} AND a.del_flag = '0'
@@ -236,7 +236,7 @@
 	</select>
 
 	<!-- 根据博学号uid查询用户 -->
-	<select id="getByUidBoxueNo" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
+	<select id="getByUid" resultType="com.thinkgem.jeesite.modules.sys.entity.User"
 			parameterType="com.thinkgem.jeesite.modules.sys.entity.User">
 		SELECT
 		<include refid="userColumns"/><!-- ,
