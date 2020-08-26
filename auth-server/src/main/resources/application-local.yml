@@ -1,0 +1,76 @@
+# We need to setup different context root for the auth server so that we can store separate
+# cookies for both the API gateway as well as the OAuth2 authorization server.
+server:
+  port: 8899
+  contextPath: /userauth
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+security:
+  user:
+    password: password
+
+logging:
+  file: /data/elearning/logs/${spring.application.name}.log
+  level:
+    org.springframework.security: DEBUG
+
+# 在需要时，可使用这个自定义环境
+environment:
+  name: local
+
+# Datasource and JPA configuration to be used for storing the OAuth authorization details
+# and token store
+# jdbc:mysql://127.0.0.1:3306/auth?useUnicode=true&characterEncoding=utf-8
+spring:
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/elearning?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    driver-class: com.mysql.jdbc.Driver
+  jackson:
+    time-zone: Asia/Shanghai
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+#     hibernate:
+#       # none useless?
+#       ddl-auto: create
+
+# 图片验证码忽略 clients 列表
+ignore:
+  clients:
+    - acme
+    - test
+
+---
+
+spring:
+  profiles: docker
+# Datasource and JPA configuration to be used for storing the OAuth authorization details
+# and token store
+  datasource:
+    url: jdbc:mysql://mysqldb:3306/auth
+    username: root
+    password: 123456
+    driver-class: com.mysql.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+eureka:
+# Register our microservices to Eureka using hostnames in a Docker environment will not work, they will all get
+# one and the same hostname. Instead we configure them to use its IP address during registration with Eureka.
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://eurekaregistry:8761/eureka/

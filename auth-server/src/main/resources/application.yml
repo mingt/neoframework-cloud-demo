@@ -1,12 +1,32 @@
-#logging:
-#  level:
-#     org:
-#       springframework:
-#         security: DEBUG
 
 mybatis:
   config-locations: 'classpath*:mybatis/_mybatis_config.xml'
   mapper-locations: 'classpath*:mybatis/mapper/**/*.xml'
-  type-aliases-package: 'com.neoframework.common.auth.model'
+  type-aliases-package: 'com.neoframework.common.auth.model;com.anilallewar.microservices.auth.model'
   # type-aliases-package: 'com.anilallewar.microservices.auth.model'
   # type-handlers-package: 'com.github.prontera.domain.type.handler'
+
+spring:
+  cloud:
+    config:
+      # 支持命令行等属性覆盖
+      allowOverride: true
+      overrideNone: true
+      overrideSystemProperties: false
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    pool:
+      max-idle: 16
+      min-idle: 0
+      max-active: 16
+      max-wait: -1
+
+## RabbitMQ + stomp
+#stomp:
+#    # 留空表示不使用外部Broker，默认为SimpleBroker。可用值有：rabbitmq，未来可有 rocketmq 等
+#    externalBroker:
+#    server: localhost
+#    port: 61613
+#    username: guest
+#    password: guest
