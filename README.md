@@ -1,11 +1,12 @@
 # neoframework-cloud-demo
-演示 Spring Cloud 基础功能，如注册中心，配置中心， 认证中心等。参考： [anilallewar/microservices-basics-spring-boot](https://github.com/anilallewar/microservices-basics-spring-boot)
+演示 Spring Cloud 基础功能和若干增强，如注册中心，配置中心， 认证中心等。参考： [anilallewar/microservices-basics-spring-boot](https://github.com/anilallewar/microservices-basics-spring-boot)
 
 ## 特性
 * 以 Spring Cloud starter 项目为例。
 * Gradle 构建，多层模块结构。同时演示一份微服务模块的代码结构。
 * 自动解释版本号，计算和设定版本信息，添加相关编译信息；提供版本查询 REST 接口。
 * styleguide 一份代码风格规范及说明。
+* auth-server 认证中心增强：集成认证，多端登录检测，扫码登录，等等。
 
 ## 缘由
 基于 [mingt/sys-version](https://github.com/mingt/sys-version) 开始整理。

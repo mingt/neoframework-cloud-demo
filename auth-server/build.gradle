@@ -9,10 +9,11 @@ apply plugin: 'eclipse'
 
 buildscript {
 	project.ext {
-         // ahming notes: 注意，未升级auth-server的springboot版本，因为升级可能影响相关配置或改动代码等
-         springBootVersion = '1.5.3.RELEASE'
-         gradleDockerVersion = '1.2'
-         jarName = 'basic-auth-server'
+        // ahming notes: 注意，未升级auth-server的springboot版本，因为升级可能影响相关配置或改动代码等 ==> 已升级
+        // see parent //springBootVersion = '1.5.3.RELEASE'
+        // see parent //gradleDockerVersion = '1.2'
+
+        jarName = 'basic-auth-server'
         //versionName = '0.0.1'
         //versionName = rootProject.getProperty("version")
         versionName = getVersionNameShort()
@@ -23,7 +24,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+        // see parent //classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
         classpath "se.transmode.gradle:gradle-docker:${project.gradleDockerVersion}"
     }
 }
@@ -33,7 +34,7 @@ task createWrapper(type: Wrapper) {
 }
 
 // Used by the Docker gradle plugin, group refers to the account under which the docker image is created
-group = 'anilallewar'
+group = 'neoframework'
 mainClassName = 'com.anilallewar.microservices.auth.AuthServerApplication'
 // see parent //sourceCompatibility = 1.7
 // see parent //targetCompatibility = 1.7
@@ -45,7 +46,7 @@ repositories {
 
 dependencyManagement {
   imports {
-    mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.RELEASE'
+    // see parent //mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.SR3'
   }
 }
 
@@ -135,5 +136,4 @@ run {
     if (project.hasProperty('rebelAgent')) {
         jvmArgs += rebelAgent
     }
-
 }

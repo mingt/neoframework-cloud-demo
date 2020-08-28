@@ -47,8 +47,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * REST endpoint to be used by other micro-services using SSO to validate the
- * authentication of the logged in user.
+ * 认证模块 api 接口及扫码登录接口等.
+ *
+ * <p>REST endpoint to be used by other micro-services using SSO to validate the
+ * authentication of the logged in user.</p>
  *
  * <p>Since the "me" endpoint needs to be protected to be accessed only after the
  * OAuth2 authentication is successful; the OAuth2 server also becomes a
@@ -242,7 +244,7 @@ public class AuthUserController {
     private String getBaseUrl(HttpServletRequest request) {
         Integer port = request.getServerPort();
 
-        // TODO: 以下暂时直接指定 https ，后面完善按 nginx 反向代理, springboot tomcat相关配置再处理
+        // TODO: 以下暂时直接指定 https ，后面完善按 nginx 反向代理, springboot tomcat 相关配置再处理
         // String baseUrl = request.getScheme() + "://" + request.getServerName();
         String baseUrl = "https://" + request.getServerName();
 
@@ -339,7 +341,7 @@ public class AuthUserController {
         if (qrCodeService.update(qrCode) < 0) { // 去掉 = 0
             logger.error("更新二维码信息插入错误");
 
-            // 提示前端重试 TODO: 优化提示
+            // 提示前端重试 TODO: 优化为更友好的提示
             throw new InternalErrorException(ApiErrorConstant.CommonError.INTERNAL_ERROR,
                     ApiErrorConstant.CommonError.INTERNAL_ERROR_MSG);
         }
@@ -394,6 +396,7 @@ public class AuthUserController {
 
                 MultiValueMap<String, String> headers = new LinkedMultiValueMap();
 
+                // TODO: 应该单独一个 client 例如 elearningqrcode 。目前 client 管理采用直接数据表操作
                 String auth = "elearingweb" + ":" + "mz6DF!^!bhi7P&^PbDUux@PVWg#jjGtM";
                 byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
                 String authHeader = "Basic " + new String(encodedAuth);
