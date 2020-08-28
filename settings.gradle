@@ -3,7 +3,7 @@ include 'base-common'
 include 'trace-service'
 
 include 'config-server'
-//include 'webservice-registry'
+include 'webservice-registry'
 include 'auth-server'
 include 'auth-server-common'
 //include 'task-webservice'
