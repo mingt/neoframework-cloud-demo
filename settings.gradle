@@ -2,7 +2,7 @@ rootProject.name = 'neoframework-cloud-demo'
 include 'base-common'
 include 'trace-service'
 
-//include 'config-server'
+include 'config-server'
 //include 'webservice-registry'
 include 'auth-server'
 include 'auth-server-common'

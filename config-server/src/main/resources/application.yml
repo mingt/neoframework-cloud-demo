@@ -1,0 +1,43 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: file://data/elearning/elearning-cloud-config
+
+# From git:
+# uri: https://github.com/anilallewar/microservices-basics-cloud-config
+
+# While in development mode, you can configure the config server to pick up configuration files from
+# the file system
+
+#(unix-like)  uri: file://Users/anilallewar/Documents/Anil Allewar/Trainings/Code Samples/Enterprise Java/Micro Services/sample-config
+#(windows)    uri: file:///D:/develop/spring-cloud/microservices-basics-cloud-config
+
+# Defines the port where the config server is running so that rest of the services can pick up
+# their external configurations
+server:
+  port: 8888
+
+---
+
+# 本地测试，使用下面命令启动，即应用了 local 的 profile :
+#     java -Dspring.profiles.active=local -jar build/libs/basic-config-server-0.0.1.jar
+# 线上部署时直接使用 default profile 。
+# 若 config-server 的 URL 地址相同，则其他服务启动时也不需要指定 spring.profiles.active ；
+# 若 config-server 的 URL 地址不同，则 bootstrap.yml 也做 profile 区分，启动时指定 active profile 。
+# refers to: http://projects.spring.io/spring-cloud/spring-cloud.html  File System Backend
+#
+# 注意: 目前为了方便代码提交避免各人本地修改此文件，下面设置为相对路径，默认启动 config-server 时都从
+# config-server/ 目录下启动 :
+#   java -jar -Dspring.profiles.active=local build\libs\basic-config-server-0.0.1.jar
+#
+spring:
+  profiles: local
+  cloud:
+    config:
+      server:
+        git:
+         uri: file:./../config/local
+#          uri: file:///D:/develop/spring-cloud/elearning-cloud-config-local
+#           uri: file:///G:/projects/boxue01/elearning-cloud-config-local
